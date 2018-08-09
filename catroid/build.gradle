@@ -273,6 +273,7 @@ dependencies {
         transitive = true
     }
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation project(':paintroid')
 }
 
 def getCurrentGitBranch() {

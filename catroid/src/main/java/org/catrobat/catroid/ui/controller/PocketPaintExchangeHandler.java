@@ -48,10 +48,7 @@ public final class PocketPaintExchangeHandler {
 	private static Activity activityReg = null;
 
 	public static boolean isPocketPaintInstalled(Activity activity, Intent intent) {
-		List<ResolveInfo> packages = activity.getPackageManager().queryIntentActivities(intent,
-				PackageManager.MATCH_DEFAULT_ONLY);
-
-		return !packages.isEmpty();
+		return true;
 	}
 
 	public static void installPocketPaintAndRegister(BroadcastReceiver receiver, Activity activity) {

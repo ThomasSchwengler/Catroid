@@ -1,0 +1,127 @@
+/**
+ *  Paintroid: An image manipulation application for Android.
+ *  Copyright (C) 2010-2015 The Catrobat Team
+ *  (<http://developer.catrobat.org/credits>)
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Affero General Public License as
+ *  published by the Free Software Foundation, either version 3 of the
+ *  License, or (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+apply plugin: 'com.android.library'
+apply plugin: 'jacoco-android'
+apply plugin: 'checkstyle'
+apply plugin: 'pmd'
+
+apply from: 'gradle/code_quality_tasks.gradle'
+
+check.dependsOn 'checkstyle'
+check.dependsOn 'pmd'
+
+jacoco {
+    toolVersion = "0.8.1"
+}
+
+jacocoAndroidUnitTestReport {
+    csv.enabled false
+    html.enabled true
+    xml.enabled true
+}
+
+android {
+    compileSdkVersion 26
+
+    defaultConfig {
+        minSdkVersion 17
+        targetSdkVersion 22
+        testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
+        versionCode 21
+        versionName "2.0.1"
+        externalNativeBuild.cmake.cppFlags "-fexceptions"
+        ndk.abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86'
+        multiDexEnabled true
+    }
+
+    sourceSets {
+        main {
+            java.srcDir 'src/main/java'
+            resources.srcDir 'src/main/res'
+        }
+
+        androidTest {
+            if (file('../testexclusions.txt').exists()) {
+                java.exclude file('../testexclusions.txt').readLines()
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt')
+        }
+        debug {
+            testCoverageEnabled = true
+        }
+    }
+
+    externalNativeBuild.cmake.path 'CMakeLists.txt'
+
+    lintOptions {
+        // specific ignores should be defined via lint.xml file, all general ignores should be added here
+        lintConfig file('config/lint.xml')
+        // CommitPrefEdits should be reviewed, if using apply instead of commit is working with our tests
+        // RtlSymmetry/RtlHardcoded should be reviewed
+        // GradleDynamicVersion ignored - e.g. according to sdkmanager:gradle-plugin it should be imported this way
+        // IconMissingDensityFolder - currently no xxxhdpi icons available
+        // TODO ticket for HandlerLeak
+        // TODO don't know if WrongRegion warning is a false-positive one
+        ignore 'ContentDescription', 'InvalidPackage', 'ValidFragment', 'GradleDependency',
+                'ClickableViewAccessibility', 'UnusedAttribute', 'CommitPrefEdits', 'OldTargetApi',
+                'RtlSymmetry', 'GradleDynamicVersion', 'RtlHardcoded', 'HandlerLeak', 'IconMissingDensityFolder',
+                'WrongRegion', 'RelativeOverlap', 'IconColors', 'MissingTranslation', 'ExtraTranslation',
+                'GradleCompatible', 'WifiManagerLeak', 'ApplySharedPref', 'DefaultLocale', 'ObsoleteSdkInt',
+                'StaticFieldLeak' , 'AppCompatResource'
+
+        textReport true
+        xmlReport true
+        htmlReport true
+        xmlOutput file("build/reports/lint-report.xml")
+        htmlOutput file("build/reports/lint-report.html")
+    }
+}
+
+dependencies {
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support:design:26.1.0'
+    implementation 'com.getkeepsafe.taptargetview:taptargetview:1.11.0'
+
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.mockito:mockito-core:2.18.3'
+
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test:rules:1.0.1'
+    androidTestImplementation 'org.mockito:mockito-android:2.18.3'
+
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-contrib:3.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-intents:3.0.1'
+
+    pmd 'net.sourceforge.pmd:pmd-core:5.8.1'
+    pmd 'net.sourceforge.pmd:pmd-java:5.8.1'
+
+    checkstyle 'com.puppycrawl.tools:checkstyle:7.6'
+}
+
+if (project.hasProperty('jenkins')) {
+    android.dexOptions.preDexLibraries = false
+}
