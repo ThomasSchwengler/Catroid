@@ -297,26 +297,10 @@ public class MainActivityPresenterTest {
 	}
 
 	@Test
-	public void testShowTermsOfServiceClickedThenShowTosDialog() {
-		presenter.showTermsOfServiceClicked();
-
-		verify(navigator).showTermsOfServiceDialog();
-		verifyNoMoreInteractions(navigator);
-	}
-
-	@Test
 	public void testShowHelpClickedThenStartWelcomeActivity() {
 		presenter.showHelpClicked();
 
 		verify(navigator).startWelcomeActivity();
-		verifyNoMoreInteractions(navigator);
-	}
-
-	@Test
-	public void testShowAboutClickedThenShowAboutDialog() {
-		presenter.showAboutClicked();
-
-		verify(navigator).showAboutDialog();
 		verifyNoMoreInteractions(navigator);
 	}
 

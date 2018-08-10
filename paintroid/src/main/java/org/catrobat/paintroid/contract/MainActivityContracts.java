@@ -43,11 +43,7 @@ public interface MainActivityContracts {
 
 		void startImportImageActivity(int requestCode);
 
-		void showAboutDialog();
-
 		void startWelcomeActivity();
-
-		void showTermsOfServiceDialog();
 
 		void showIndeterminateProgressDialog();
 
@@ -132,13 +128,7 @@ public interface MainActivityContracts {
 
 		void backToPocketCodeClicked();
 
-		void showTermsOfServiceClicked();
-
 		void showHelpClicked();
-
-		void showAboutClicked();
-
-		void selectLanguageClicked();
 
 		void onNewImage();
 
@@ -240,6 +230,8 @@ public interface MainActivityContracts {
 
 	interface NavigationDrawerViewHolder {
 		void removeItem(@IdRes int id);
+
+		void setVersion(String versionString);
 
 		void showExitFullScreen();
 

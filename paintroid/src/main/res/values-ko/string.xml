@@ -20,7 +20,7 @@
 
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
-  <string name="app_name" tools:ignore="UnusedResources">포켓 페인트</string>
+  <string name="pocketpaint_app_name" tools:ignore="UnusedResources">포켓 페인트</string>
   <string name="button_brush">붓</string>
   <string name="button_cursor">커서</string>
   <string name="button_pipette">색 고르기</string>
