@@ -29,7 +29,6 @@ import android.view.Gravity;
 import android.widget.Toast;
 
 import org.catrobat.paintroid.MainActivity;
-import org.catrobat.paintroid.MultilingualActivity;
 import org.catrobat.paintroid.PaintroidApplication;
 import org.catrobat.paintroid.R;
 import org.catrobat.paintroid.WelcomeActivity;
@@ -78,12 +77,6 @@ public class MainActivityNavigator implements MainActivityContracts.Navigator {
 				mainActivity.getPresenter().setTopBarColor(color);
 			}
 		});
-	}
-
-	@Override
-	public void startLanguageActivity(int requestCode) {
-		Intent language = new Intent(mainActivity.getApplicationContext(), MultilingualActivity.class);
-		mainActivity.startActivityForResult(language, requestCode);
 	}
 
 	@Override

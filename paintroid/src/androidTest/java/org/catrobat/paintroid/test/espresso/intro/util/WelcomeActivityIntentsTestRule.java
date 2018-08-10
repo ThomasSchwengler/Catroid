@@ -20,12 +20,12 @@
 package org.catrobat.paintroid.test.espresso.intro.util;
 
 import android.content.Context;
+import android.preference.PreferenceManager;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.util.LayoutDirection;
 
-import org.catrobat.paintroid.MultilingualActivity;
-import org.catrobat.paintroid.Session;
+import org.catrobat.paintroid.LanguageSupport;
 import org.catrobat.paintroid.WelcomeActivity;
 import org.catrobat.paintroid.test.espresso.util.EspressoUtils;
 
@@ -68,15 +68,12 @@ public class WelcomeActivityIntentsTestRule extends IntentsTestRule<WelcomeActiv
 
 		EspressoUtils.shouldStartSequence(startSequence);
 
-		String languageTagKey = rtl ? "ar" : "";
+		String languageTagKey = rtl ? "ar" : "en";
 		Context targetContext = InstrumentationRegistry.getTargetContext();
-		targetContext.getSharedPreferences(MultilingualActivity.SHARED_PREFERENCES_TAG, Context.MODE_PRIVATE)
+		PreferenceManager.getDefaultSharedPreferences(targetContext)
 				.edit()
-				.putString(MultilingualActivity.LANGUAGE_TAG_KEY, languageTagKey)
+				.putString(LanguageSupport.LANGUAGE_TAG_KEY, languageTagKey)
 				.commit();
-
-		Session session = new Session(targetContext);
-		session.setFirstTimeLaunch(true);
 	}
 
 	@Override
@@ -95,9 +92,9 @@ public class WelcomeActivityIntentsTestRule extends IntentsTestRule<WelcomeActiv
 	protected void afterActivityFinished() {
 		super.afterActivityFinished();
 
-		getActivity().getSharedPreferences(MultilingualActivity.SHARED_PREFERENCES_TAG, Context.MODE_PRIVATE)
+		PreferenceManager.getDefaultSharedPreferences(getActivity())
 				.edit()
-				.remove(MultilingualActivity.LANGUAGE_TAG_KEY)
+				.remove(LanguageSupport.LANGUAGE_TAG_KEY)
 				.commit();
 	}
 }

@@ -19,7 +19,6 @@
 
 package org.catrobat.paintroid;
 
-import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -109,18 +108,11 @@ public class WelcomeActivity extends AppCompatActivity {
 			}
 		}
 	};
-	private Session session;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		setTheme(R.style.PocketPaintWelcomeActivityTheme);
 		super.onCreate(savedInstanceState);
-
-		session = new Session(this);
-		if (!session.isFirstTimeLaunch() && getIntent().getFlags() != Intent.FLAG_GRANT_READ_URI_PERMISSION) {
-			launchHomeScreen();
-		}
-		getIntent().setFlags(0);
 
 		getStyleAttributesFromXml();
 
@@ -129,7 +121,7 @@ public class WelcomeActivity extends AppCompatActivity {
 					| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
 		}
 
-		MultilingualActivity.setToChosenLanguage(this);
+		LanguageSupport.setToChosenLanguage(this);
 		setContentView(R.layout.activity_pocketpaint_welcome);
 
 		viewPager = findViewById(R.id.pocketpaint_view_pager);
@@ -159,7 +151,7 @@ public class WelcomeActivity extends AppCompatActivity {
 		btnSkip.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				launchHomeScreen();
+				finish();
 			}
 		});
 
@@ -177,7 +169,7 @@ public class WelcomeActivity extends AppCompatActivity {
 				}
 
 				if (finished) {
-					launchHomeScreen();
+					finish();
 				} else {
 					viewPager.setCurrentItem(current);
 				}
@@ -221,14 +213,6 @@ public class WelcomeActivity extends AppCompatActivity {
 		return viewPager.getCurrentItem() + i;
 	}
 
-	private void launchHomeScreen() {
-		session.setFirstTimeLaunch(false);
-		Intent mainActivityIntent = new Intent(this, MainActivity.class);
-		mainActivityIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-		startActivity(mainActivityIntent);
-		finish();
-	}
-
 	private void changeStatusBarColor() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 			Window window = getWindow();
@@ -258,7 +242,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
 	@Override
 	public void onBackPressed() {
-		launchHomeScreen();
+		finish();
 	}
 
 	@Override

@@ -37,8 +37,6 @@ public interface MainActivityContracts {
 	interface Navigator {
 		void showColorPickerDialog();
 
-		void startLanguageActivity(int requestCode);
-
 		void startLoadImageActivity(int requestCode);
 
 		void startTakePictureActivity(int requestCode, Uri cameraImageUri);

@@ -202,7 +202,6 @@ public class MainActivityPresenter implements Presenter, SaveImageCallback, Load
 
 	@Override
 	public void selectLanguageClicked() {
-		navigator.startLanguageActivity(REQUEST_CODE_LANGUAGE);
 	}
 
 	@Override

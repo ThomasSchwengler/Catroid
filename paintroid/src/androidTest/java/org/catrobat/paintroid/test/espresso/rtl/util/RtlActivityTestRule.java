@@ -20,23 +20,37 @@
 package org.catrobat.paintroid.test.espresso.rtl.util;
 
 import android.app.Activity;
-import android.content.Context;
+import android.preference.PreferenceManager;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 
-import org.catrobat.paintroid.MultilingualActivity;
+import org.catrobat.paintroid.LanguageSupport;
 
 public class RtlActivityTestRule<T extends Activity> extends ActivityTestRule<T> {
-	public RtlActivityTestRule(Class<T> activityClass) {
+	private final String language;
+
+	public RtlActivityTestRule(Class<T> activityClass, String language) {
 		super(activityClass);
+		this.language = language;
+	}
+
+	@Override
+	protected void beforeActivityLaunched() {
+		super.beforeActivityLaunched();
+
+		PreferenceManager.getDefaultSharedPreferences(InstrumentationRegistry.getTargetContext())
+				.edit()
+				.putString(LanguageSupport.LANGUAGE_TAG_KEY, language)
+				.commit();
 	}
 
 	@Override
 	protected void afterActivityFinished() {
 		super.afterActivityFinished();
 
-		getActivity().getSharedPreferences(MultilingualActivity.SHARED_PREFERENCES_TAG, Context.MODE_PRIVATE)
+		PreferenceManager.getDefaultSharedPreferences(getActivity())
 				.edit()
-				.remove(MultilingualActivity.LANGUAGE_TAG_KEY)
+				.remove(LanguageSupport.LANGUAGE_TAG_KEY)
 				.commit();
 	}
 }

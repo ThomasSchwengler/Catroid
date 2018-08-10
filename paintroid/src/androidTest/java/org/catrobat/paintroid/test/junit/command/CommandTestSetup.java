@@ -26,9 +26,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Cap;
 import android.graphics.PointF;
-import android.support.test.InstrumentationRegistry;
 
-import org.catrobat.paintroid.PaintroidApplication;
 import org.catrobat.paintroid.command.Command;
 import org.catrobat.paintroid.model.Layer;
 import org.catrobat.paintroid.model.LayerModel;

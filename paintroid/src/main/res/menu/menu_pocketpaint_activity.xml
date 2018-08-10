@@ -45,10 +45,6 @@
 
     <group android:id="@+id/pocketpaint_menu_bottom">
         <item
-            android:id="@+id/pocketpaint_nav_lang"
-            android:icon="@drawable/ic_pocketpaint_menu_language"
-            android:title="@string/menu_language" />
-        <item
             android:id="@+id/pocketpaint_nav_tos"
             android:icon="@drawable/ic_pocketpaint_menu_tos"
             android:title="@string/menu_terms_of_use_and_service" />

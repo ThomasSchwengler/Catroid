@@ -38,8 +38,6 @@ import org.catrobat.catroid.common.Constants;
 import org.catrobat.catroid.common.LookData;
 import org.catrobat.catroid.content.Scene;
 import org.catrobat.catroid.content.Sprite;
-import org.catrobat.catroid.ui.BaseActivity;
-import org.catrobat.catroid.ui.MarketingActivity;
 import org.catrobat.catroid.ui.controller.BackpackListManager;
 import org.catrobat.catroid.ui.controller.PocketPaintExchangeHandler;
 import org.catrobat.catroid.ui.recyclerview.adapter.LookAdapter;
@@ -49,7 +47,6 @@ import org.catrobat.catroid.ui.recyclerview.dialog.NewLookDialogFragment;
 import org.catrobat.catroid.ui.recyclerview.dialog.RenameDialogFragment;
 import org.catrobat.catroid.utils.SnackbarUtil;
 import org.catrobat.catroid.utils.ToastUtil;
-import org.catrobat.paintroid.MainActivity;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -235,7 +232,9 @@ public class LookListFragment extends RecyclerViewFragment<LookData> {
 
 		item.invalidateThumbnailBitmap();
 
-		Intent intent = new Intent(getActivity(), MainActivity.class);
+		Intent intent = new Intent("android.intent.action.MAIN");
+		intent.setComponent(new ComponentName(POCKET_PAINT_PACKAGE_NAME,
+				Constants.POCKET_PAINT_INTENT_ACTIVITY_NAME));
 		Bundle bundle = new Bundle();
 		bundle.putString(Constants.EXTRA_PICTURE_PATH_POCKET_PAINT, item.getFile().getAbsolutePath());
 		intent.putExtras(bundle);

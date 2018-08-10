@@ -321,14 +321,6 @@ public class MainActivityPresenterTest {
 	}
 
 	@Test
-	public void testSelectLanguageClickedThenStartLanguageActivity() {
-		presenter.selectLanguageClicked();
-
-		verify(navigator).startLanguageActivity(REQUEST_CODE_LANGUAGE);
-		verifyNoMoreInteractions(navigator);
-	}
-
-	@Test
 	public void testOnNewImageThenResetCommandManager() {
 		DisplayMetrics metrics = mock(DisplayMetrics.class);
 		when(view.getDisplayMetrics()).thenReturn(metrics);
