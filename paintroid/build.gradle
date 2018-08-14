@@ -38,7 +38,7 @@ jacocoAndroidUnitTestReport {
 }
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion rootProject.ext.compileSdkVersion
 
     defaultConfig {
         minSdkVersion 17
@@ -101,25 +101,24 @@ android {
 }
 
 dependencies {
-    implementation 'com.android.support:appcompat-v7:26.1.0'
-    implementation 'com.android.support:design:26.1.0'
+    implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
+    implementation "com.android.support:design:${rootProject.ext.supportLibVersion}"
     implementation 'com.getkeepsafe.taptargetview:taptargetview:1.11.0'
 
-    testImplementation 'junit:junit:4.12'
-    testImplementation 'org.mockito:mockito-core:2.18.3'
+    testImplementation "junit:junit:${rootProject.ext.junitVersion}"
+    testImplementation "org.mockito:mockito-core:${rootProject.ext.mockitoVersion}"
 
-    androidTestImplementation 'com.android.support.test:runner:1.0.1'
-    androidTestImplementation 'com.android.support.test:rules:1.0.1'
-    androidTestImplementation 'org.mockito:mockito-android:2.18.3'
+    androidTestImplementation "com.android.support.test:runner:${rootProject.ext.supportTestLibVersion}"
+    androidTestImplementation "org.mockito:mockito-android:${rootProject.ext.mockitoVersion}"
 
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-contrib:3.0.1'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-intents:3.0.1'
+    androidTestImplementation "com.android.support.test.espresso:espresso-core:${rootProject.ext.espressoVersion}"
+    androidTestImplementation "com.android.support.test.espresso:espresso-contrib:${rootProject.ext.espressoVersion}"
+    androidTestImplementation "com.android.support.test.espresso:espresso-intents:${rootProject.ext.espressoVersion}"
 
-    pmd 'net.sourceforge.pmd:pmd-core:5.8.1'
-    pmd 'net.sourceforge.pmd:pmd-java:5.8.1'
+    pmd "net.sourceforge.pmd:pmd-core:${rootProject.ext.pmdVersion}"
+    pmd "net.sourceforge.pmd:pmd-java:${rootProject.ext.pmdVersion}"
 
-    checkstyle 'com.puppycrawl.tools:checkstyle:7.6'
+    checkstyle "com.puppycrawl.tools:checkstyle:${rootProject.ext.checkstyleVersion}"
 }
 
 if (project.hasProperty('jenkins')) {
