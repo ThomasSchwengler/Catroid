@@ -119,7 +119,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
 		PaintroidApplication.checkeredBackgroundBitmap = BitmapFactory.decodeResource(getResources(), R.drawable
 				.pocketpaint_checkeredbg);
 
-		LanguageSupport.setToChosenLanguage(this);
 		setContentView(R.layout.activity_pocketpaint_main);
 
 		onCreateGlobals();
