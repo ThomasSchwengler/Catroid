@@ -31,8 +31,8 @@ import java.util.Stack
 abstract class BinaryOperatorToken(PRIORITY: Int, private val operatorText: String) : OperatorToken(PRIORITY) {
 
     override fun applyTo(values: Stack<ValueToken>) {
-        val leftToken = values.pop()
         val rightToken = values.pop()
+        val leftToken = values.pop()
         values.push(applyTo(leftToken, rightToken))
     }
 
