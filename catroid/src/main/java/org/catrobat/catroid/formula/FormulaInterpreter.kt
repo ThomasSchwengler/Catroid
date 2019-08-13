@@ -23,10 +23,7 @@
 
 package org.catrobat.catroid.formula
 
-import org.catrobat.catroid.formula.function.FunctionToken
-import org.catrobat.catroid.formula.operator.BinaryOperatorToken
 import org.catrobat.catroid.formula.operator.OperatorToken
-import org.catrobat.catroid.formula.operator.UnaryOperatorToken
 import org.catrobat.catroid.formula.value.ValueToken
 import java.util.*
 
@@ -43,46 +40,12 @@ class FormulaInterpreter {
         val values = Stack<ValueToken>()
 
         for (token in tokens) {
-
-            when (token.type) {
-                Token.Type.VALUE -> values.push(token as ValueToken)
-
-                Token.Type.LEFT_BRACKET -> operators.push(token as OperatorToken)
-
-                Token.Type.RIGHT_BRACKET -> {
-                    while (!operators.empty() && operators.peek().type != Token.Type.LEFT_BRACKET) {
-                        if (operators.peek() is BinaryOperatorToken) {
-                            values.push((operators.pop() as BinaryOperatorToken).applyTo(values.pop(), values.pop()))
-                        } else if (operators.peek() is UnaryOperatorToken) {
-                            values.push((operators.pop() as UnaryOperatorToken).applyTo(values.pop()))
-                        }
-                    }
-                    operators.pop()
-                }
-
-                Token.Type.OPERATOR -> {
-                    val operator = token as OperatorToken
-
-                    while (!operators.empty() && operators.peek().PRIORITY > operator.PRIORITY) {
-                        if (operators.peek() is BinaryOperatorToken) {
-                            values.push((operators.pop() as BinaryOperatorToken).applyTo(values.pop(), values.pop()))
-                        } else if (operators.peek() is UnaryOperatorToken) {
-                            values.push((operators.pop() as UnaryOperatorToken).applyTo(values.pop()))
-                        }
-                    }
-                    operators.push(operator)
-                }
-
-                Token.Type.FUNCTION -> values.push((token as FunctionToken).eval())
-            }
+            token.eval(operators, values)
         }
 
         while (!operators.empty()) {
-            if (operators.peek() is BinaryOperatorToken) {
-                values.push((operators.pop() as BinaryOperatorToken).applyTo(values.pop(), values.pop()))
-            } else if (operators.peek() is UnaryOperatorToken) {
-                values.push((operators.pop() as UnaryOperatorToken).applyTo(values.pop()))
-            }
+            val op = operators.pop()
+            op.applyTo(values)
         }
 
         return values.pop()

@@ -1,6 +1,6 @@
 /*
  * Catroid: An on-device visual programming system for Android devices
- * Copyright (C) 2010-2017 The Catrobat Team
+ * Copyright (C) 2010-2019 The Catrobat Team
  * (<http://developer.catrobat.org/credits>)
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,21 +21,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.catrobat.catroid.formula.operator
+package org.catrobat.catroid.formula.textprovider
 
-import org.catrobat.catroid.formula.Token
-import org.catrobat.catroid.formula.value.ValueToken
-import java.util.Stack
+interface FormulaStringBuilder {
+    fun appendDouble(argument : Double) : FormulaStringBuilder
+    fun append(argument : String) : FormulaStringBuilder
 
-abstract class OperatorToken(private val PRIORITY: Int) : Token() {
+    fun beginFunction(functionText: String) : FormulaStringBuilder
+    fun nextArgument() : FormulaStringBuilder
+    fun endFunction() : FormulaStringBuilder
 
-    override fun eval(operators: Stack<OperatorToken>, values: Stack<ValueToken>) {
-        while (!operators.empty() && operators.peek().PRIORITY > PRIORITY) {
-            val op = operators.pop()
-            op.applyTo(values)
-        }
-        operators.push(this)
-    }
-
-    abstract fun applyTo(values: Stack<ValueToken>)
+    fun getText() : String
 }

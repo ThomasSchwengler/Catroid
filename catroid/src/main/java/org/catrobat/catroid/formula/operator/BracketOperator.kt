@@ -1,6 +1,6 @@
 /*
  * Catroid: An on-device visual programming system for Android devices
- * Copyright (C) 2010-2017 The Catrobat Team
+ * Copyright (C) 2010-2019 The Catrobat Team
  * (<http://developer.catrobat.org/credits>)
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,19 +23,37 @@
 
 package org.catrobat.catroid.formula.operator
 
-import org.catrobat.catroid.formula.Token
+import org.catrobat.catroid.formula.textprovider.FormulaStringBuilder
 import org.catrobat.catroid.formula.value.ValueToken
 import java.util.Stack
 
-abstract class OperatorToken(private val PRIORITY: Int) : Token() {
-
-    override fun eval(operators: Stack<OperatorToken>, values: Stack<ValueToken>) {
-        while (!operators.empty() && operators.peek().PRIORITY > PRIORITY) {
-            val op = operators.pop()
-            op.applyTo(values)
-        }
-        operators.push(this)
+abstract class BracketOperator : OperatorToken(0) {
+    override fun applyTo(values: Stack<ValueToken>) {
     }
 
-    abstract fun applyTo(values: Stack<ValueToken>)
+    class LeftBracket : BracketOperator() {
+        override fun appendText(stringBuilder: FormulaStringBuilder) {
+            stringBuilder.append("(")
+        }
+
+        override fun eval(operators: Stack<OperatorToken>, values: Stack<ValueToken>) {
+            operators.push(this)
+        }
+    }
+
+    class RightBracket : BracketOperator() {
+        override fun appendText(stringBuilder: FormulaStringBuilder) {
+            stringBuilder.append(")")
+        }
+
+        override fun eval(operators: Stack<OperatorToken>, values: Stack<ValueToken>) {
+            while (!operators.empty()) {
+                val op = operators.pop()
+                op.applyTo(values)
+                if (op is LeftBracket) {
+                    return
+                }
+            }
+        }
+    }
 }

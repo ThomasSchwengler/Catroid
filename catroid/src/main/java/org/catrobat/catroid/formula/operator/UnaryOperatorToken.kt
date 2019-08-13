@@ -23,18 +23,24 @@
 
 package org.catrobat.catroid.formula.operator
 
-import org.catrobat.catroid.R
 import org.catrobat.catroid.formula.FormulaInterpreter
+import org.catrobat.catroid.formula.textprovider.FormulaStringBuilder
 import org.catrobat.catroid.formula.value.ValueToken
+import java.util.Stack
 
-abstract class UnaryOperatorToken(PRIORITY: Int) : OperatorToken(Type.OPERATOR, PRIORITY) {
+abstract class UnaryOperatorToken(PRIORITY: Int, private val operatorText: String) : OperatorToken(PRIORITY) {
+
+    override fun applyTo(values: Stack<ValueToken>) {
+        values.push(applyTo(values.pop()))
+    }
 
     abstract fun applyTo(token: ValueToken) : ValueToken
 
-    class NotOperatorToken : UnaryOperatorToken(2) {
+    override fun appendText(stringBuilder: FormulaStringBuilder) {
+        stringBuilder.append(operatorText)
+    }
 
-        override fun getResourceId() = R.string.formula_editor_logic_not
-
+    class NotOperatorToken : UnaryOperatorToken(2, "not") {
         override fun applyTo(token: ValueToken) : ValueToken =
                 ValueToken(FormulaInterpreter.eval(!FormulaInterpreter.eval(token.value)))
     }

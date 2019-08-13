@@ -24,72 +24,17 @@
 package org.catrobat.catroid.formula.textprovider
 
 import android.content.res.Resources
-import org.catrobat.catroid.R
 import org.catrobat.catroid.formula.Token
-import org.catrobat.catroid.formula.function.BinaryFunctionToken
-import org.catrobat.catroid.formula.function.FunctionToken
-import org.catrobat.catroid.formula.function.UnaryFunctionToken
-import org.catrobat.catroid.formula.value.ValueToken
 
 class FormulaTextProvider(val resources: Resources) {
 
     fun getText(tokens: List<Token>): String {
-
-        var string = ""
-
-        for (token in tokens) {
-            string += getText(token)
-        }
-
-        return string.trim()
-    }
-
-    fun getEndOfTokenStringAtPosition(tokens: List<Token>, position: Int): Int {
-        var textLength = 0
+        val stringBuilder = DefaultFormulaStringBuilder()
 
         for (token in tokens) {
-            textLength += getText(token).length
-            if (textLength >= position) break
+            token.appendText(stringBuilder)
         }
 
-        return textLength
-    }
-
-    fun getTokenAtPosition(tokens: List<Token>, position: Int): Token {
-        var textLength = 0
-
-        for (token in tokens) {
-            textLength += getText(token).length
-            if (textLength >= position) return token
-        }
-
-        return tokens.last()
-    }
-
-
-    private fun getText(token: Token) = when (token.type) {
-            Token.Type.VALUE -> (token as ValueToken).getString()
-
-            Token.Type.FUNCTION -> getFunctionText(token as FunctionToken)
-
-            else -> resources.getString(token.getResourceId())
-    }
-
-    private fun getFunctionText(functionToken: FunctionToken): String {
-
-        var string = resources.getString(functionToken.getResourceId()) +
-                resources.getString(R.string.formula_editor_bracket_open)
-
-        if (functionToken is UnaryFunctionToken) {
-            string += getText(functionToken.tokens)
-        }
-
-        if (functionToken is BinaryFunctionToken) {
-            string += getText(functionToken.leftTokens) + ", " + getText(functionToken.rightTokens)
-        }
-
-        string += resources.getString(R.string.formula_editor_bracket_close)
-
-        return string
+        return stringBuilder.getText().trim()
     }
 }

@@ -23,126 +23,102 @@
 
 package org.catrobat.catroid.formula.operator
 
-import org.catrobat.catroid.R
 import org.catrobat.catroid.formula.FormulaInterpreter
+import org.catrobat.catroid.formula.textprovider.FormulaStringBuilder
 import org.catrobat.catroid.formula.value.ValueToken
+import java.util.Stack
 
-abstract class BinaryOperatorToken(PRIORITY: Int) : OperatorToken(Type.OPERATOR, PRIORITY) {
+abstract class BinaryOperatorToken(PRIORITY: Int, private val operatorText: String) : OperatorToken(PRIORITY) {
 
-    /**
-     * The "inverted" parameter order (rightToken, leftToken) is used on purpose because the value stack
-     * {@link #eval(List<Token> tokens) FormulaInterpreter} contains the values in this order.
-     */
-    abstract fun applyTo(rightToken: ValueToken, leftToken: ValueToken): ValueToken
+    override fun applyTo(values: Stack<ValueToken>) {
+        val leftToken = values.pop()
+        val rightToken = values.pop()
+        values.push(applyTo(leftToken, rightToken))
+    }
 
-    class MissingBinaryOperatorToken : BinaryOperatorToken(666) {
+    override fun appendText(stringBuilder: FormulaStringBuilder) {
+        stringBuilder.append(operatorText)
+    }
 
-        override fun getResourceId() = R.string.fe_missing_binary_operator
+    abstract fun applyTo(leftToken: ValueToken, rightToken: ValueToken): ValueToken
 
-        override fun applyTo(rightToken: ValueToken, leftToken: ValueToken): ValueToken {
+    class MissingBinaryOperatorToken : BinaryOperatorToken(666, "Missing binary operator") {
+        override fun applyTo(leftToken: ValueToken, rightToken: ValueToken): ValueToken {
             throw Exception("Missing Binary Operator")
         }
     }
 
-    class MultOperatorToken : BinaryOperatorToken(2) {
-
-        override fun getResourceId() = R.string.formula_editor_operator_mult
-
-        override fun applyTo(rightToken: ValueToken, leftToken: ValueToken) =
-                ValueToken(leftToken.value * rightToken.value)
+    class MultOperatorToken : BinaryOperatorToken(2, "×") {
+        override fun applyTo(leftToken: ValueToken, rightToken: ValueToken): ValueToken {
+            return ValueToken(leftToken.value * rightToken.value)
+        }
     }
 
-    class DivOperatorToken : BinaryOperatorToken(2) {
-
-        override fun getResourceId() = R.string.formula_editor_operator_divide
-
-        override fun applyTo(rightToken: ValueToken, leftToken: ValueToken): ValueToken {
+    class DivOperatorToken : BinaryOperatorToken(2, "÷") {
+        override fun applyTo(leftToken: ValueToken, rightToken: ValueToken): ValueToken {
             if (rightToken.value == 0.0) throw Exception("DIVIDED BY 0")
             return ValueToken(leftToken.value / rightToken.value)
         }
     }
 
-    class AddOperatorToken : BinaryOperatorToken(1) {
-
-        override fun getResourceId() = R.string.formula_editor_operator_plus
-
-        override fun applyTo(rightToken: ValueToken, leftToken: ValueToken) =
-                ValueToken(leftToken.value + rightToken.value)
+    class AddOperatorToken : BinaryOperatorToken(1, "+") {
+        override fun applyTo(leftToken: ValueToken, rightToken: ValueToken): ValueToken {
+            return ValueToken(leftToken.value + rightToken.value)
+        }
     }
 
-    class SubOperatorToken : BinaryOperatorToken(1) {
-
-        override fun getResourceId() = R.string.formula_editor_operator_minus
-
-        override fun applyTo(rightToken: ValueToken, leftToken: ValueToken) =
-                ValueToken(leftToken.value - rightToken.value)
+    class SubOperatorToken : BinaryOperatorToken(1, "-") {
+        override fun applyTo(leftToken: ValueToken, rightToken: ValueToken): ValueToken {
+            return ValueToken(leftToken.value - rightToken.value)
+        }
     }
 
-    class AndOperatorToken : BinaryOperatorToken(1) {
-
-        override fun getResourceId() = R.string.formula_editor_logic_and
-
-        override fun applyTo(rightToken: ValueToken, leftToken: ValueToken): ValueToken {
+    class AndOperatorToken : BinaryOperatorToken(1, "and") {
+        override fun applyTo(leftToken: ValueToken, rightToken: ValueToken): ValueToken {
             val value = FormulaInterpreter.eval(leftToken.value) && FormulaInterpreter.eval(rightToken.value)
             return ValueToken(FormulaInterpreter.eval(value))
         }
     }
 
-    class OrOperatorToken : BinaryOperatorToken(0) {
-
-        override fun getResourceId() = R.string.formula_editor_logic_or
-
-        override fun applyTo(rightToken: ValueToken, leftToken: ValueToken): ValueToken {
+    class OrOperatorToken : BinaryOperatorToken(0, "or") {
+        override fun applyTo(leftToken: ValueToken, rightToken: ValueToken): ValueToken {
             val value = FormulaInterpreter.eval(leftToken.value) || FormulaInterpreter.eval(rightToken.value)
             return ValueToken(FormulaInterpreter.eval(value))
         }
     }
 
-    class EqualsOperatorToken : BinaryOperatorToken(0) {
-
-        override fun getResourceId() = R.string.formula_editor_logic_equal
-
-        override fun applyTo(rightToken: ValueToken, leftToken: ValueToken) =
-                ValueToken(FormulaInterpreter.eval(leftToken.value == rightToken.value))
+    class EqualsOperatorToken : BinaryOperatorToken(0, "=") {
+        override fun applyTo(leftToken: ValueToken, rightToken: ValueToken): ValueToken {
+            return ValueToken(FormulaInterpreter.eval(leftToken.value == rightToken.value))
+        }
     }
 
-    class GreaterOperatorToken : BinaryOperatorToken(0) {
-
-        override fun getResourceId() = R.string.formula_editor_logic_greaterthan
-
-        override fun applyTo(rightToken: ValueToken, leftToken: ValueToken) =
-                ValueToken(FormulaInterpreter.eval(leftToken.value > rightToken.value))
+    class GreaterOperatorToken : BinaryOperatorToken(0, ">") {
+        override fun applyTo(leftToken: ValueToken, rightToken: ValueToken): ValueToken {
+            return ValueToken(FormulaInterpreter.eval(leftToken.value > rightToken.value))
+        }
     }
 
-    class GreaterEqualsOperatorToken : BinaryOperatorToken(0) {
-
-        override fun getResourceId() = R.string.formula_editor_logic_greaterequal
-
-        override fun applyTo(rightToken: ValueToken, leftToken: ValueToken) =
-                ValueToken(FormulaInterpreter.eval(leftToken.value >= rightToken.value))
+    class GreaterEqualsOperatorToken : BinaryOperatorToken(0, "≥") {
+        override fun applyTo(leftToken: ValueToken, rightToken: ValueToken): ValueToken {
+            return ValueToken(FormulaInterpreter.eval(leftToken.value >= rightToken.value))
+        }
     }
 
-    class SmallerOperatorToken : BinaryOperatorToken(0) {
-
-        override fun getResourceId() = R.string.formula_editor_logic_lesserthan
-
-        override fun applyTo(rightToken: ValueToken, leftToken: ValueToken) =
-                ValueToken(FormulaInterpreter.eval(leftToken.value < rightToken.value))
+    class SmallerOperatorToken : BinaryOperatorToken(0, "<") {
+        override fun applyTo(leftToken: ValueToken, rightToken: ValueToken): ValueToken {
+            return ValueToken(FormulaInterpreter.eval(leftToken.value < rightToken.value))
+        }
     }
 
-    class SmallerEqualsOperatorToken : BinaryOperatorToken(0) {
-
-        override fun getResourceId() = R.string.formula_editor_logic_leserequal
-
-        override fun applyTo(rightToken: ValueToken, leftToken: ValueToken) =
-                ValueToken(FormulaInterpreter.eval(leftToken.value <= rightToken.value))
+    class SmallerEqualsOperatorToken : BinaryOperatorToken(0, "≤") {
+        override fun applyTo(leftToken: ValueToken, rightToken: ValueToken): ValueToken {
+            return ValueToken(FormulaInterpreter.eval(leftToken.value <= rightToken.value))
+        }
     }
-
-    class NotEqualsOperatorToken : BinaryOperatorToken(0) {
-
-        override fun getResourceId() = R.string.formula_editor_logic_notequal
-
-        override fun applyTo(rightToken: ValueToken, leftToken: ValueToken) =
-                ValueToken(FormulaInterpreter.eval(leftToken.value != rightToken.value))
+    class NotEqualsOperatorToken : BinaryOperatorToken(0, "≠") {
+        override fun applyTo(leftToken: ValueToken, rightToken: ValueToken): ValueToken {
+            return ValueToken(FormulaInterpreter.eval(leftToken.value != rightToken.value))
+        }
     }
 }

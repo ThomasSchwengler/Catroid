@@ -23,108 +23,73 @@
 
 package org.catrobat.catroid.formula.function
 
-import org.catrobat.catroid.R
 import org.catrobat.catroid.formula.FormulaInterpreter
 import org.catrobat.catroid.formula.Token
+import org.catrobat.catroid.formula.textprovider.FormulaStringBuilder
 import org.catrobat.catroid.formula.value.ValueToken
 
-abstract class UnaryFunctionToken(val tokens: List<Token>) : FunctionToken() {
+abstract class UnaryFunctionToken(val tokens: List<Token>, private val functionText:
+String) : FunctionToken() {
 
-    class Sin(tokens: List<Token>) : UnaryFunctionToken(tokens) {
+    override fun appendText(stringBuilder: FormulaStringBuilder) {
+        stringBuilder.beginFunction(functionText)
+        tokens.forEach { token -> token.appendText(stringBuilder) }
+        stringBuilder.endFunction()
+    }
 
-        override fun getResourceId() = R.string.formula_editor_function_sin
-
+    class Sin(tokens: List<Token>) : UnaryFunctionToken(tokens, "sine") {
         override fun eval() = ValueToken(Math.sin(FormulaInterpreter().eval(tokens).value))
     }
 
-    class Cos(tokens: List<Token>) : UnaryFunctionToken(tokens) {
-
-        override fun getResourceId() = R.string.formula_editor_function_cos
-
+    class Cos(tokens: List<Token>) : UnaryFunctionToken(tokens, "cosine") {
         override fun eval() = ValueToken(Math.cos(FormulaInterpreter().eval(tokens).value))
     }
 
-    class Tan(tokens: List<Token>) : UnaryFunctionToken(tokens) {
-
-        override fun getResourceId() = R.string.formula_editor_function_tan
-
+    class Tan(tokens: List<Token>) : UnaryFunctionToken(tokens, "tangent") {
         override fun eval() = ValueToken(Math.tan(FormulaInterpreter().eval(tokens).value))
     }
 
-    class Ln(tokens: List<Token>) : UnaryFunctionToken(tokens) {
-
-        override fun getResourceId() = R.string.formula_editor_function_ln
-
+    class Ln(tokens: List<Token>) : UnaryFunctionToken(tokens, "natural logarithm") {
         override fun eval() = ValueToken(Math.log(FormulaInterpreter().eval(tokens).value))
     }
 
-    class Lg(tokens: List<Token>) : UnaryFunctionToken(tokens) {
-
-        override fun getResourceId() = R.string.formula_editor_function_log
-
+    class Lg(tokens: List<Token>) : UnaryFunctionToken(tokens, "decimal logarithm") {
         override fun eval() = ValueToken(Math.log10(FormulaInterpreter().eval(tokens).value))
     }
 
-    class Sqrt(tokens: List<Token>) : UnaryFunctionToken(tokens) {
-
-        override fun getResourceId() = R.string.formula_editor_function_sqrt
-
+    class Sqrt(tokens: List<Token>) : UnaryFunctionToken(tokens, "square root") {
         override fun eval() = ValueToken(Math.sqrt(FormulaInterpreter().eval(tokens).value))
     }
 
-    class Abs(tokens: List<Token>) : UnaryFunctionToken(tokens) {
-
-        override fun getResourceId() = R.string.formula_editor_function_abs
-
+    class Abs(tokens: List<Token>) : UnaryFunctionToken(tokens, "absolute value") {
         override fun eval(): ValueToken = ValueToken(Math.abs(FormulaInterpreter().eval(tokens).value))
     }
 
-    class Asin(tokens: List<Token>) : UnaryFunctionToken(tokens) {
-
-        override fun getResourceId() = R.string.formula_editor_function_arcsin
-
+    class Asin(tokens: List<Token>) : UnaryFunctionToken(tokens, "arcsine") {
         override fun eval() = ValueToken(Math.asin(FormulaInterpreter().eval(tokens).value))
     }
 
-    class Acos(tokens: List<Token>) : UnaryFunctionToken(tokens) {
-
-        override fun getResourceId() = R.string.formula_editor_function_arccos
-
+    class Acos(tokens: List<Token>) : UnaryFunctionToken(tokens, "arccosine") {
         override fun eval() = ValueToken(Math.acos(FormulaInterpreter().eval(tokens).value))
     }
 
-    class Atan(tokens: List<Token>) : UnaryFunctionToken(tokens) {
-
-        override fun getResourceId() = R.string.formula_editor_function_arctan
-
+    class Atan(tokens: List<Token>) : UnaryFunctionToken(tokens, "arctangent") {
         override fun eval() = ValueToken(Math.atan(FormulaInterpreter().eval(tokens).value))
     }
 
-    class Exp(tokens: List<Token>) : UnaryFunctionToken(tokens) {
-
-        override fun getResourceId() = R.string.formula_editor_function_exp
-
+    class Exp(tokens: List<Token>) : UnaryFunctionToken(tokens, "exponent") {
         override fun eval() = ValueToken(Math.exp(FormulaInterpreter().eval(tokens).value))
     }
 
-    class Floor(tokens: List<Token>) : UnaryFunctionToken(tokens) {
-
-        override fun getResourceId() = R.string.formula_editor_function_floor
-
+    class Floor(tokens: List<Token>) : UnaryFunctionToken(tokens, "floor") {
         override fun eval() = ValueToken(Math.floor(FormulaInterpreter().eval(tokens).value))
     }
 
-    class Ceil(tokens: List<Token>) : UnaryFunctionToken(tokens) {
-
-        override fun getResourceId() = R.string.formula_editor_function_ceil
-
+    class Ceil(tokens: List<Token>) : UnaryFunctionToken(tokens, "ceiling") {
         override fun eval() = ValueToken(Math.ceil(FormulaInterpreter().eval(tokens).value))
     }
 
-    class Round(tokens: List<Token>) : UnaryFunctionToken(tokens) {
-
-        override fun getResourceId() = R.string.formula_editor_function_round
-
+    class Round(tokens: List<Token>) : UnaryFunctionToken(tokens, "round") {
         override fun eval() = ValueToken(Math.round(FormulaInterpreter().eval(tokens).value).toDouble())
     }
 }

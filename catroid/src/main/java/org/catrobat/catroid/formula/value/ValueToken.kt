@@ -24,35 +24,21 @@
 package org.catrobat.catroid.formula.value
 
 import org.catrobat.catroid.formula.Token
+import org.catrobat.catroid.formula.operator.OperatorToken
+import org.catrobat.catroid.formula.textprovider.FormulaStringBuilder
+import java.util.Stack
 
-open class ValueToken(var value: Double) : Token(Type.VALUE) {
+open class ValueToken(var value: Double) : Token() {
+
+    override fun appendText(stringBuilder: FormulaStringBuilder) {
+        stringBuilder.appendDouble(value)
+    }
+
+    override fun eval(operators: Stack<OperatorToken>, values: Stack<ValueToken>) {
+        values.push(this)
+    }
 
     private var inputString = ""
-
-    fun appendDigit(digit: Char) {
-        if (inputString.isEmpty() && digit == '.') inputString += 0
-
-        inputString += digit
-
-        try { value = inputString.toDouble() } catch (_: NumberFormatException) {
-            inputString = inputString.dropLast(1)
-        }
-    }
-
-    /**
-     * @return true if the token should be removed form the list because it is empty.
-     */
-    fun removeDigit(): Boolean {
-        if (inputString.isEmpty()) inputString = value.toString()
-
-        inputString = inputString.dropLast(1)
-
-        return try { value = inputString.toDouble(); false } catch (_: NumberFormatException) { true }
-    }
-
-    override fun getResourceId(): Int {
-        throw Exception("NOT Translatable: Numeric Values should not be translated!")
-    }
 
     open fun getString() = if (inputString.isNotEmpty()) inputString else value.toString().removeSuffix(".0")
 

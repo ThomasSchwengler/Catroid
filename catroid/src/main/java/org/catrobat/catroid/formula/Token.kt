@@ -23,11 +23,14 @@
 
 package org.catrobat.catroid.formula
 
-abstract class Token(val type: Type) {
+import org.catrobat.catroid.formula.operator.OperatorToken
+import org.catrobat.catroid.formula.textprovider.FormulaStringBuilder
+import org.catrobat.catroid.formula.value.ValueToken
+import java.util.Stack
 
-    enum class Type {
-        LEFT_BRACKET, RIGHT_BRACKET, OPERATOR, VALUE, FUNCTION
-    }
+abstract class Token {
 
-    abstract fun getResourceId(): Int
+    abstract fun eval(operators: Stack<OperatorToken>, values: Stack<ValueToken>)
+
+    abstract fun appendText(stringBuilder: FormulaStringBuilder)
 }

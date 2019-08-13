@@ -24,9 +24,15 @@
 package org.catrobat.catroid.formula.function
 
 import org.catrobat.catroid.formula.Token
+import org.catrobat.catroid.formula.operator.OperatorToken
 import org.catrobat.catroid.formula.value.ValueToken
+import java.util.Stack
 
-abstract class FunctionToken : Token(Type.FUNCTION) {
+abstract class FunctionToken : Token() {
+
+    override fun eval(operators: Stack<OperatorToken>, values: Stack<ValueToken>) {
+        values.push(this.eval())
+    }
 
     abstract fun eval(): ValueToken
 }

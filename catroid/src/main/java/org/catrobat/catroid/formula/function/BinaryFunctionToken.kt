@@ -23,41 +23,43 @@
 
 package org.catrobat.catroid.formula.function
 
-import org.catrobat.catroid.R
 import org.catrobat.catroid.formula.FormulaInterpreter
 import org.catrobat.catroid.formula.Token
+import org.catrobat.catroid.formula.textprovider.FormulaStringBuilder
 import org.catrobat.catroid.formula.value.ValueToken
 
-abstract class BinaryFunctionToken(val leftTokens: List<Token>, val rightTokens: List<Token>) : FunctionToken() {
+abstract class BinaryFunctionToken(val leftTokens: List<Token>, val rightTokens: List<Token>, private val functionText:
+String) : FunctionToken() {
 
-    class Max(leftTokens: List<Token>, rightTokens: List<Token>) : BinaryFunctionToken(leftTokens, rightTokens) {
-
-        override fun getResourceId() = R.string.formula_editor_function_max
-
-        override fun eval() = ValueToken(Math.max(FormulaInterpreter().eval(leftTokens).value,
-                FormulaInterpreter().eval(rightTokens).value))
+    override fun appendText(stringBuilder: FormulaStringBuilder) {
+        stringBuilder.beginFunction(functionText)
+        leftTokens.forEach { token -> token.appendText(stringBuilder) }
+        stringBuilder.nextArgument()
+        rightTokens.forEach { token -> token.appendText(stringBuilder) }
+        stringBuilder.endFunction()
     }
 
-    class Min(leftTokens: List<Token>, rightTokens: List<Token>) : BinaryFunctionToken(leftTokens, rightTokens) {
+    class Max(leftTokens: List<Token>, rightTokens: List<Token>) : BinaryFunctionToken(leftTokens, rightTokens,
+                                                                                       "maximum of") {
+        override fun eval() = ValueToken(Math.max(FormulaInterpreter().eval(leftTokens).value,
+                                       FormulaInterpreter().eval(rightTokens).value))
+    }
 
-        override fun getResourceId() = R.string.formula_editor_function_min
-
+    class Min(leftTokens: List<Token>, rightTokens: List<Token>) : BinaryFunctionToken(leftTokens, rightTokens,
+                                                                                       "minimum of") {
         override fun eval() = ValueToken(Math.min(FormulaInterpreter().eval(leftTokens).value,
                 FormulaInterpreter().eval(rightTokens).value))
     }
 
-    class Pow(leftTokens: List<Token>, rightTokens: List<Token>) : BinaryFunctionToken(leftTokens, rightTokens) {
-
-        override fun getResourceId() = R.string.formula_editor_function_power
+    class Pow(leftTokens: List<Token>, rightTokens: List<Token>) : BinaryFunctionToken(leftTokens, rightTokens,
+                                                                                       "power") {
 
         override fun eval() = ValueToken(Math.pow(FormulaInterpreter().eval(leftTokens).value,
                 FormulaInterpreter().eval(rightTokens).value))
     }
 
-    class Mod(leftTokens: List<Token>, rightTokens: List<Token>) : BinaryFunctionToken(leftTokens, rightTokens) {
-
-        override fun getResourceId() = R.string.formula_editor_function_mod
-
+    class Mod(leftTokens: List<Token>, rightTokens: List<Token>) : BinaryFunctionToken(leftTokens, rightTokens,
+                                                                                       "modulo") {
         override fun eval() = ValueToken(FormulaInterpreter().eval(leftTokens).value %
                 FormulaInterpreter().eval(rightTokens).value)
     }
