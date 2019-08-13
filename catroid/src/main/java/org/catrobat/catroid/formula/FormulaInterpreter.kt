@@ -40,7 +40,7 @@ class FormulaInterpreter {
         val values = Stack<ValueToken>()
 
         for (token in tokens) {
-            token.eval(operators, values)
+            token.eval(this, operators, values)
         }
 
         while (!operators.empty()) {

@@ -23,6 +23,7 @@
 
 package org.catrobat.catroid.formula.function
 
+import org.catrobat.catroid.formula.FormulaInterpreter
 import org.catrobat.catroid.formula.Token
 import org.catrobat.catroid.formula.operator.OperatorToken
 import org.catrobat.catroid.formula.value.ValueToken
@@ -30,9 +31,9 @@ import java.util.Stack
 
 abstract class FunctionToken : Token() {
 
-    override fun eval(operators: Stack<OperatorToken>, values: Stack<ValueToken>) {
-        values.push(this.eval())
+    override fun eval(interpreter: FormulaInterpreter, operators: Stack<OperatorToken>, values: Stack<ValueToken>) {
+        values.push(this.eval(interpreter))
     }
 
-    abstract fun eval(): ValueToken
+    abstract fun eval(interpreter: FormulaInterpreter): ValueToken
 }

@@ -23,13 +23,14 @@
 
 package org.catrobat.catroid.formula.operator
 
+import org.catrobat.catroid.formula.FormulaInterpreter
 import org.catrobat.catroid.formula.Token
 import org.catrobat.catroid.formula.value.ValueToken
 import java.util.Stack
 
 abstract class OperatorToken(private val PRIORITY: Int) : Token() {
 
-    override fun eval(operators: Stack<OperatorToken>, values: Stack<ValueToken>) {
+    override fun eval(interpreter: FormulaInterpreter, operators: Stack<OperatorToken>, values: Stack<ValueToken>) {
         while (!operators.empty() && operators.peek().PRIORITY > PRIORITY) {
             val op = operators.pop()
             op.applyTo(values)

@@ -30,7 +30,7 @@ import java.util.Stack
 
 abstract class Token {
 
-    abstract fun eval(operators: Stack<OperatorToken>, values: Stack<ValueToken>)
+    abstract fun eval(interpreter: FormulaInterpreter, operators: Stack<OperatorToken>, values: Stack<ValueToken>)
 
     abstract fun appendText(stringBuilder: FormulaStringBuilder)
 }

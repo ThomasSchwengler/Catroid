@@ -65,106 +65,61 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 
 @RunWith(JUnit4.class)
 public class FormulaTest {
-
-	private ValueToken varA = new ValueToken(100);
-	private ValueToken varB = new ValueToken(5);
-	private ValueToken varC = new ValueToken(0.1);
-	private ValueToken varD = new ValueToken(-2);
-	private ValueToken varE = new ValueToken(0.8);
-	private ValueToken var0 = new ValueToken(0);
-
-	private MultOperatorToken mult = new MultOperatorToken();
-	private DivOperatorToken div = new DivOperatorToken();
-	private AddOperatorToken add = new AddOperatorToken();
-	private SubOperatorToken sub = new SubOperatorToken();
-
-	private AndOperatorToken and = new AndOperatorToken();
-	private OrOperatorToken or = new OrOperatorToken();
-	private NotOperatorToken not = new NotOperatorToken();
-
-	private GreaterOperatorToken greater = new GreaterOperatorToken();
-	private GreaterEqualsOperatorToken greaterEquals = new GreaterEqualsOperatorToken();
-	private SmallerOperatorToken smaller = new SmallerOperatorToken();
-	private SmallerEqualsOperatorToken smallerEquals = new SmallerEqualsOperatorToken();
-	private EqualsOperatorToken equals = new EqualsOperatorToken();
-	private NotEqualsOperatorToken notEquals = new NotEqualsOperatorToken();
-
-	private ValueToken valTrue = new ValueToken(1);
-	private ValueToken valFalse = new ValueToken(0);
-
-	private BracketOperator leftBracket = new BracketOperator.LeftBracket();
-	private BracketOperator rightBracket = new BracketOperator.RightBracket();
-
-	private void assertFormulaResult(Formula formula, double expectedResult) {
+	private void assertFormulaResult(double expectedResult, Formula formula) {
 		FormulaInterpreter interpreter = new FormulaInterpreter();
 		assertEquals(expectedResult, interpreter.eval(formula.getTokens()).getValue());
 	}
 
 	@Test
 	public void testAdd() {
-		List<Token> tokens = new ArrayList<>();
-
-		tokens.add(varB);
-		tokens.add(add);
-		tokens.add(varE);
+		List<Token> tokens = Arrays.asList(new ValueToken(5), new AddOperatorToken(), new ValueToken(0.8));
 
 		Formula formula = new Formula(tokens);
-		assertFormulaResult(formula, varB.getValue() + varE.getValue());
+		assertFormulaResult(5 + 0.8, formula);
 	}
 
 	@Test
 	public void testSub() {
-		List<Token> tokens = new ArrayList<>();
-
-		tokens.add(varB);
-		tokens.add(sub);
-		tokens.add(varE);
+		List<Token> tokens = Arrays.asList(new ValueToken(5), new SubOperatorToken(), new ValueToken(0.8));
 
 		Formula formula = new Formula(tokens);
-		assertFormulaResult(formula, varB.getValue() - varE.getValue());
+		assertFormulaResult(5 - 0.8, formula);
 	}
 
 	@Test
 	public void testMult() {
-		List<Token> tokens = new ArrayList<>();
-
-		tokens.add(varB);
-		tokens.add(mult);
-		tokens.add(varE);
+		List<Token> tokens = Arrays.asList(new ValueToken(5), new MultOperatorToken(), new ValueToken(0.8));
 
 		Formula formula = new Formula(tokens);
-		assertFormulaResult(formula, varB.getValue() * varE.getValue());
+		assertFormulaResult(5 * 0.8, formula);
 	}
 
 	@Test
 	public void testDiv() {
-		List<Token> tokens = new ArrayList<>();
-
-		tokens.add(varB);
-		tokens.add(div);
-		tokens.add(varE);
+		List<Token> tokens = Arrays.asList(new ValueToken(5), new DivOperatorToken(), new ValueToken(0.8));
 
 		Formula formula = new Formula(tokens);
-		assertFormulaResult(formula, varB.getValue() / varE.getValue());
+		assertFormulaResult(5 / 0.8, formula);
+	}
 
-		tokens.clear();
-		tokens.add(varB);
-		tokens.add(div);
-		tokens.add(var0);
+	@Test
+	public void testInvalidDiv() {
+		List<Token> tokens = Arrays.asList(new ValueToken(5), new DivOperatorToken(), new ValueToken(0));
 
-		formula = new Formula(tokens);
+		Formula formula = new Formula(tokens);
 
 		try {
-			assertFormulaResult(formula, varB.getValue() / var0.getValue());
-			// Division by 0 should NEVER work!
-			Assert.fail();
+			FormulaInterpreter interpreter = new FormulaInterpreter();
+			interpreter.eval(formula.getTokens()).getValue();
+			Assert.fail("Division by 0 should NEVER work!");
 		} catch (Exception e) {
 			assertEquals("DIVIDED BY 0", e.getMessage());
 		}
@@ -172,412 +127,325 @@ public class FormulaTest {
 
 	@Test
 	public void testMathOperatorPrecedence() {
-		List<Token> tokens = new ArrayList<>();
-		Formula formula;
+		List<Token> tokens = Arrays.asList(
+				new ValueToken(100),
+				new AddOperatorToken(),
+				new ValueToken(5),
+				new MultOperatorToken(),
+				new ValueToken(0.1));
 
-		tokens.add(varA);
-		tokens.add(add);
-		tokens.add(varB);
-		tokens.add(mult);
-		tokens.add(varC);
-
-		formula = new Formula(tokens);
-		assertFormulaResult(formula, varA.getValue() + varB.getValue() * varC.getValue());
+		Formula formula = new Formula(tokens);
+		assertFormulaResult(100 + 5 * 0.1, formula);
 	}
 
 	@Test
-	public void testBracketsInMathFormula() {
-		List<Token> tokens = new ArrayList<>();
-		Formula formula;
+	public void testBracketsInMathFormulaWithMultiply() {
+		List<Token> tokens = Arrays.asList(
+				new BracketOperator.LeftBracket(),
+				new ValueToken(100),
+				new AddOperatorToken(),
+				new ValueToken(5),
+				new BracketOperator.RightBracket(),
+				new MultOperatorToken(),
+				new ValueToken(0.1));
 
-		tokens.clear();
-		tokens.add(leftBracket);
-		tokens.add(varA);
-		tokens.add(add);
-		tokens.add(varB);
-		tokens.add(rightBracket);
-		tokens.add(mult);
-		tokens.add(varC);
-
-		formula = new Formula(tokens);
-		assertFormulaResult(formula, (varA.getValue() + varB.getValue()) * varC.getValue());
-
-		tokens.clear();
-		tokens.add(varD);
-		tokens.add(mult);
-		tokens.add(leftBracket);
-		tokens.add(varA);
-		tokens.add(sub);
-		tokens.add(varB);
-		tokens.add(rightBracket);
-		tokens.add(div);
-		tokens.add(varC);
-
-		formula = new Formula(tokens);
-		assertFormulaResult(formula, varD.getValue() * (varA.getValue() - varB.getValue()) / varC.getValue());
+		Formula formula = new Formula(tokens);
+		assertFormulaResult((100 + 5) * 0.1, formula);
 	}
 
-	private void testFunction(FunctionToken functionToken, double expectedResult) {
+	@Test
+	public void testBracketsInMathFormulaWithDivide() {
+		List<Token> tokens = Arrays.asList(
+				new ValueToken(-2),
+				new MultOperatorToken(),
+				new BracketOperator.LeftBracket(),
+				new ValueToken(100),
+				new SubOperatorToken(),
+				new ValueToken(5),
+				new BracketOperator.RightBracket(),
+				new DivOperatorToken(),
+				new ValueToken(0.1));
 
-		List<Token> tokens = new ArrayList<>();
-		tokens.add(functionToken);
+		Formula formula = new Formula(tokens);
+		assertFormulaResult(-2 * (100 - 5) / 0.1, formula);
+	}
+
+	private void testFunction(double expectedResult, FunctionToken functionToken) {
+		List<Token> tokens = Collections.singletonList(functionToken);
 		Formula formula = new Formula(tokens);
 
-		assertFormulaResult(formula, expectedResult);
+		assertFormulaResult(expectedResult, formula);
 	}
 
 	@Test
 	public void testSin() {
-		List<Token> internalTokens = new ArrayList<>();
-		internalTokens.add(varA);
-		internalTokens.add(div);
-		internalTokens.add(varB);
+		List<Token> tokens = Arrays.asList(new ValueToken(100), new DivOperatorToken(), new ValueToken(5));
 
-		Sin func = new Sin(internalTokens);
-		testFunction(func, Math.sin(varA.getValue() / varB.getValue()));
+		Sin func = new Sin(tokens);
+		testFunction(Math.sin(100 / 5f), func);
 	}
 
 	@Test
 	public void testCos() {
-		List<Token> internalTokens = new ArrayList<>();
-		internalTokens.add(varA);
-		internalTokens.add(div);
-		internalTokens.add(varB);
+		List<Token> tokens = Arrays.asList(new ValueToken(100), new DivOperatorToken(), new ValueToken(5));
 
-		Cos func = new Cos(internalTokens);
-		testFunction(func, Math.cos(varA.getValue() / varB.getValue()));
+		Cos func = new Cos(tokens);
+		testFunction(Math.cos(100 / 5f), func);
 	}
 
 	@Test
 	public void testTan() {
-		List<Token> internalTokens = new ArrayList<>();
-		internalTokens.add(varA);
-		internalTokens.add(div);
-		internalTokens.add(varB);
+		List<Token> tokens = Arrays.asList(new ValueToken(100), new DivOperatorToken(), new ValueToken(5));
 
-		Tan func = new Tan(internalTokens);
-		testFunction(func, Math.tan(varA.getValue() / varB.getValue()));
+		Tan func = new Tan(tokens);
+		testFunction(Math.tan(100 / 5f), func);
 	}
 
 	@Test
 	public void testLn() {
-		List<Token> internalTokens = new ArrayList<>();
-		internalTokens.add(varA);
-		internalTokens.add(div);
-		internalTokens.add(varB);
+		List<Token> tokens = Arrays.asList(new ValueToken(100), new DivOperatorToken(), new ValueToken(5));
 
-		Ln func = new Ln(internalTokens);
-		testFunction(func, Math.log(varA.getValue() / varB.getValue()));
+		Ln func = new Ln(tokens);
+		testFunction(Math.log(100 / 5f), func);
 	}
 
 	@Test
 	public void testLog() {
-		List<Token> internalTokens = new ArrayList<>();
-		internalTokens.add(varA);
-		internalTokens.add(div);
-		internalTokens.add(varB);
+		List<Token> tokens = Arrays.asList(new ValueToken(100), new DivOperatorToken(), new ValueToken(5));
 
-		Lg func = new Lg(internalTokens);
-		testFunction(func, Math.log10(varA.getValue() / varB.getValue()));
+		Lg func = new Lg(tokens);
+		testFunction(Math.log10(100 / 5f), func);
 	}
 
 	@Test
 	public void testSqrt() {
-		List<Token> internalTokens = new ArrayList<>();
-		internalTokens.add(varA);
-		internalTokens.add(div);
-		internalTokens.add(varB);
+		List<Token> tokens = Arrays.asList(new ValueToken(100), new DivOperatorToken(), new ValueToken(5));
 
-		Sqrt func = new Sqrt(internalTokens);
-		testFunction(func, Math.sqrt(varA.getValue() / varB.getValue()));
+		Sqrt func = new Sqrt(tokens);
+		testFunction(Math.sqrt(100 / 5f), func);
 	}
 
 	@Test
 	public void testAbs() {
-		List<Token> internalTokens = new ArrayList<>();
-		internalTokens.add(varD);
-		internalTokens.add(mult);
-		internalTokens.add(varB);
+		List<Token> tokens = Arrays.asList(new ValueToken(-2), new MultOperatorToken(), new ValueToken(5));
 
-		Abs func = new Abs(internalTokens);
-		testFunction(func, Math.abs(varD.getValue() * varB.getValue()));
+		Abs func = new Abs(tokens);
+		testFunction(Math.abs(-2 * 5f), func);
 	}
 
 	@Test
 	public void testAsin() {
-		List<Token> internalTokens = new ArrayList<>();
-		internalTokens.add(varA);
-		internalTokens.add(div);
-		internalTokens.add(varB);
+		List<Token> tokens = Arrays.asList(new ValueToken(100), new DivOperatorToken(), new ValueToken(5));
 
-		Asin func = new Asin(internalTokens);
-		testFunction(func, Math.asin(varA.getValue() / varB.getValue()));
+		Asin func = new Asin(tokens);
+		testFunction(Math.asin(100 / 5f), func);
 	}
 
 	@Test
 	public void testAcos() {
-		List<Token> internalTokens = new ArrayList<>();
-		internalTokens.add(varA);
-		internalTokens.add(div);
-		internalTokens.add(varB);
+		List<Token> tokens = Arrays.asList(new ValueToken(100), new DivOperatorToken(), new ValueToken(5));
 
-		Acos func = new Acos(internalTokens);
-		testFunction(func, Math.acos(varA.getValue() / varB.getValue()));
+		Acos func = new Acos(tokens);
+		testFunction(Math.acos(100 / 5f), func);
 	}
 
 	@Test
 	public void testAtan() {
-		List<Token> internalTokens = new ArrayList<>();
-		internalTokens.add(varA);
-		internalTokens.add(div);
-		internalTokens.add(varB);
+		List<Token> tokens = Arrays.asList(new ValueToken(100), new DivOperatorToken(), new ValueToken(5));
 
-		Atan func = new Atan(internalTokens);
-		testFunction(func, Math.atan(varA.getValue() / varB.getValue()));
+		Atan func = new Atan(tokens);
+		testFunction(Math.atan(100 / 5f), func);
 	}
 
 	@Test
 	public void testExp() {
-		List<Token> internalTokens = new ArrayList<>();
-		internalTokens.add(varA);
-		internalTokens.add(div);
-		internalTokens.add(varB);
+		List<Token> tokens = Arrays.asList(new ValueToken(100), new DivOperatorToken(), new ValueToken(5));
 
-		Exp func = new Exp(internalTokens);
-		testFunction(func, Math.exp(varA.getValue() / varB.getValue()));
+		Exp func = new Exp(tokens);
+		testFunction(Math.exp(100 / 5f), func);
 	}
 
 	@Test
 	public void testFloor() {
-		List<Token> internalTokens = new ArrayList<>();
-		internalTokens.add(varC);
+		List<Token> tokens = Collections.singletonList(new ValueToken(0.1));
 
-		Floor func = new Floor(internalTokens);
-		testFunction(func, Math.floor(varC.getValue()));
+		Floor func = new Floor(tokens);
+		testFunction(Math.floor(0.1), func);
 	}
 
 	@Test
 	public void testCeil() {
-		List<Token> internalTokens = new ArrayList<>();
-		internalTokens.add(varC);
+		List<Token> tokens = Collections.singletonList(new ValueToken(0.1));
 
-		Ceil func = new Ceil(internalTokens);
-		testFunction(func, Math.ceil(varC.getValue()));
+		Ceil func = new Ceil(tokens);
+		testFunction(Math.ceil(0.1), func);
 	}
 
 	@Test
 	public void testRoundUp() {
-		List<Token> internalTokens = new ArrayList<>();
-		internalTokens.add(varE);
+		List<Token> tokens = Collections.singletonList(new ValueToken(0.8));
 
-		Round func = new Round(internalTokens);
-		testFunction(func, Math.round(varE.getValue()));
+		Round func = new Round(tokens);
+		testFunction(Math.round(0.8), func);
 	}
 
 	@Test
 	public void testRoundDown() {
-		List<Token> internalTokens = new ArrayList<>();
-		internalTokens.add(varC);
+		List<Token> tokens = Collections.singletonList(new ValueToken(0.1));
 
-		Round func = new Round(internalTokens);
-		testFunction(func, Math.round(varC.getValue()));
+		Round func = new Round(tokens);
+		testFunction(Math.round(0.1), func);
 	}
 
 	@Test
 	public void testGreater() {
-		List<Token> tokens = new ArrayList<>();
-
-		tokens.add(varB);
-		tokens.add(greater);
-		tokens.add(varE);
+		List<Token> tokens = Arrays.asList(new ValueToken(5), new GreaterOperatorToken(), new ValueToken(0.8));
 
 		Formula formula = new Formula(tokens);
-		assertFormulaResult(formula, FormulaInterpreter.Companion.eval(varB.getValue() > varE.getValue()));
+		assertFormulaResult(1, formula);
 	}
 
 	@Test
 	public void testGreaterEquals() {
-		List<Token> tokens = new ArrayList<>();
-
-		tokens.add(varB);
-		tokens.add(greaterEquals);
-		tokens.add(varE);
+		List<Token> tokens = Arrays.asList(new ValueToken(5), new GreaterEqualsOperatorToken(), new ValueToken(0.8));
 
 		Formula formula = new Formula(tokens);
-		assertFormulaResult(formula, FormulaInterpreter.Companion.eval(varB.getValue() >= varE.getValue()));
+		assertFormulaResult(1, formula);
 	}
 
 	@Test
 	public void testSmaller() {
-		List<Token> tokens = new ArrayList<>();
-
-		tokens.add(varB);
-		tokens.add(smaller);
-		tokens.add(varE);
+		List<Token> tokens = Arrays.asList(new ValueToken(5), new SmallerOperatorToken(), new ValueToken(0.8));
 
 		Formula formula = new Formula(tokens);
-		assertFormulaResult(formula, FormulaInterpreter.Companion.eval(varB.getValue() < varE.getValue()));
+		assertFormulaResult(0, formula);
 	}
 
 	@Test
 	public void testSmallerEquals() {
-		List<Token> tokens = new ArrayList<>();
-
-		tokens.add(varB);
-		tokens.add(smallerEquals);
-		tokens.add(varE);
+		List<Token> tokens = Arrays.asList(new ValueToken(5), new SmallerEqualsOperatorToken(), new ValueToken(0.8));
 
 		Formula formula = new Formula(tokens);
-		assertFormulaResult(formula, FormulaInterpreter.Companion.eval(varB.getValue() <= varE.getValue()));
+		assertFormulaResult(0, formula);
 	}
 
 	@Test
 	public void testEquals() {
-		List<Token> tokens = new ArrayList<>();
-
-		tokens.add(varB);
-		tokens.add(equals);
-		tokens.add(varE);
+		List<Token> tokens = Arrays.asList(new ValueToken(5), new EqualsOperatorToken(), new ValueToken(0.8));
 
 		Formula formula = new Formula(tokens);
-		assertFormulaResult(formula, FormulaInterpreter.Companion.eval(varB.getValue() == varE.getValue()));
+		assertFormulaResult(0, formula);
 	}
 
 	@Test
 	public void testNotEquals() {
-		List<Token> tokens = new ArrayList<>();
-
-		tokens.add(varB);
-		tokens.add(notEquals);
-		tokens.add(varE);
+		List<Token> tokens = Arrays.asList(new ValueToken(5), new NotEqualsOperatorToken(), new ValueToken(0.8));
 
 		Formula formula = new Formula(tokens);
-		assertFormulaResult(formula, FormulaInterpreter.Companion.eval(varB.getValue() != varE.getValue()));
+		assertFormulaResult(1, formula);
 	}
 
 	@Test
 	public void testAnd() {
-		List<Token> tokens = new ArrayList<>();
-
-		tokens.add(valTrue);
-		tokens.add(and);
-		tokens.add(valFalse);
+		List<Token> tokens = Arrays.asList(new ValueToken(1), new AndOperatorToken(), new ValueToken(0));
 
 		Formula formula = new Formula(tokens);
-		assertFormulaResult(formula, FormulaInterpreter.Companion.eval(false));
+		assertFormulaResult(0, formula);
 	}
 
 	@Test
 	public void testOr() {
-		List<Token> tokens = new ArrayList<>();
-
-		tokens.add(valTrue);
-		tokens.add(or);
-		tokens.add(valFalse);
+		List<Token> tokens = Arrays.asList(new ValueToken(1), new OrOperatorToken(), new ValueToken(0));
 
 		Formula formula = new Formula(tokens);
-		assertFormulaResult(formula, FormulaInterpreter.Companion.eval(true));
+		assertFormulaResult(1, formula);
 	}
 
 	@Test
 	public void testNot() {
-		List<Token> tokens = new ArrayList<>();
-
-		tokens.add(not);
-		tokens.add(valFalse);
+		List<Token> tokens = Arrays.asList(new NotOperatorToken(), new ValueToken(0));
 
 		Formula formula = new Formula(tokens);
-		assertFormulaResult(formula, FormulaInterpreter.Companion.eval(true));
+		assertFormulaResult(1, formula);
 	}
 
 	@Test
 	public void testBooleanOperatorPrecedence() {
-		List<Token> tokens = new ArrayList<>();
-
-		tokens.add(not);
-		tokens.add(valFalse);
-		tokens.add(and);
-		tokens.add(valTrue);
-		tokens.add(or);
-		tokens.add(valFalse);
+		List<Token> tokens = Arrays.asList(
+				new NotOperatorToken(),
+				new ValueToken(0),
+				new AndOperatorToken(),
+				new ValueToken(1),
+				new OrOperatorToken(),
+				new ValueToken(0));
 
 		Formula formula = new Formula(tokens);
-		assertFormulaResult(formula, FormulaInterpreter.Companion.eval(true));
+		assertFormulaResult(1, formula);
+	}
+
+	@Test
+	public void testBracketsInBooleanFormulaInverted() {
+		List<Token> tokens = Arrays.asList(
+				new NotOperatorToken(),
+				new BracketOperator.LeftBracket(),
+				new ValueToken(0),
+				new AndOperatorToken(),
+				new ValueToken(1),
+				new BracketOperator.RightBracket());
+
+		Formula formula = new Formula(tokens);
+		assertFormulaResult(1, formula);
+
 	}
 
 	@Test
 	public void testBracketsInBooleanFormula() {
-		List<Token> tokens = new ArrayList<>();
-		Formula formula;
+		List<Token> tokens = Arrays.asList(
+				new BracketOperator.LeftBracket(),
+				new ValueToken(0),
+				new OrOperatorToken(),
+				new ValueToken(1),
+				new BracketOperator.RightBracket(),
+				new AndOperatorToken(),
+				new ValueToken(1));
 
-		tokens.add(not);
-		tokens.add(leftBracket);
-		tokens.add(valFalse);
-		tokens.add(and);
-		tokens.add(valTrue);
-		tokens.add(rightBracket);
-
-		formula = new Formula(tokens);
-		assertFormulaResult(formula, FormulaInterpreter.Companion.eval(true));
-
-		tokens.clear();
-		tokens.add(leftBracket);
-		tokens.add(valFalse);
-		tokens.add(or);
-		tokens.add(valTrue);
-		tokens.add(rightBracket);
-		tokens.add(and);
-		tokens.add(valTrue);
-
-		formula = new Formula(tokens);
-		assertFormulaResult(formula, FormulaInterpreter.Companion.eval(true));
+		Formula formula = new Formula(tokens);
+		assertFormulaResult(1, formula);
 	}
 
 	@Test
 	public void testMax() {
-		List<Token> leftTokens = new ArrayList<>();
-		leftTokens.add(varC);
-
-		List<Token> rightTokens = new ArrayList<>();
-		rightTokens.add(varA);
+		List<Token> leftTokens = Collections.singletonList(new ValueToken(0.1));
+		List<Token> rightTokens = Collections.singletonList(new ValueToken(100));
 
 		Max func = new Max(leftTokens, rightTokens);
-		testFunction(func, Math.max(varC.getValue(), varA.getValue()));
+		testFunction(Math.max(0.1, 100), func);
 	}
 
 	@Test
 	public void testMin() {
-		List<Token> leftTokens = new ArrayList<>();
-		leftTokens.add(varC);
-
-		List<Token> rightTokens = new ArrayList<>();
-		rightTokens.add(varA);
+		List<Token> leftTokens = Collections.singletonList(new ValueToken(0.1));
+		List<Token> rightTokens = Collections.singletonList(new ValueToken(100));
 
 		Min func = new Min(leftTokens, rightTokens);
-		testFunction(func, Math.min(varC.getValue(), varA.getValue()));
+		testFunction(Math.min(0.1, 100), func);
 	}
 
 	@Test
 	public void testPow() {
-		List<Token> leftTokens = new ArrayList<>();
-		leftTokens.add(varC);
-
-		List<Token> rightTokens = new ArrayList<>();
-		rightTokens.add(varA);
+		List<Token> leftTokens = Collections.singletonList(new ValueToken(0.1));
+		List<Token> rightTokens = Collections.singletonList(new ValueToken(100));
 
 		Pow func = new Pow(leftTokens, rightTokens);
-		testFunction(func, Math.pow(varC.getValue(), varA.getValue()));
+		testFunction(Math.pow(0.1, 100), func);
 	}
 
 	@Test
 	public void testMod() {
-		List<Token> leftTokens = new ArrayList<>();
-		leftTokens.add(varA);
-
-		List<Token> rightTokens = new ArrayList<>();
-		rightTokens.add(varC);
+		List<Token> leftTokens = Collections.singletonList(new ValueToken(100));
+		List<Token> rightTokens = Collections.singletonList(new ValueToken(0.1));
 
 		Mod func = new Mod(leftTokens, rightTokens);
-		testFunction(func, varA.getValue() % varC.getValue());
+		testFunction(100 % 0.1, func);
 	}
 }

@@ -31,12 +31,14 @@ import org.catrobat.catroid.formula.operator.BinaryOperatorToken.AddOperatorToke
 import org.catrobat.catroid.formula.operator.BinaryOperatorToken.MultOperatorToken;
 import org.catrobat.catroid.formula.value.ValueToken;
 import org.catrobat.catroid.formula.value.ValueToken.VariableToken;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
@@ -46,16 +48,20 @@ public class UserVariableTest {
 
 	private FormulaInterpreter interpreter = new FormulaInterpreter();
 
+	private Formula internalFormula;
+
+	@Before
+	public void setUp() {
+		List<Token> internalTokens = Arrays.asList(
+				new ValueToken(2),
+				new MultOperatorToken(),
+				new ValueToken(5));
+
+		internalFormula = new Formula(internalTokens);
+	}
+
 	@Test
 	public void testSimpleVariable() {
-		List<Token> internalTokens = new ArrayList<>();
-
-		internalTokens.add(new ValueToken(2));
-		internalTokens.add(new MultOperatorToken());
-		internalTokens.add(new ValueToken(5));
-
-		Formula internalFormula = new Formula(internalTokens);
-
 		VariableToken variable = new VariableToken("A", 0.0);
 
 		DataProvider dataProvider = new DataProvider();
@@ -63,34 +69,26 @@ public class UserVariableTest {
 
 		dataProvider.updateValues();
 
-		assertEquals(2 * 5.0, interpreter.eval(new ArrayList<Token>(Arrays.asList(variable))).getValue());
+		assertEquals(2 * 5.0, interpreter.eval(new ArrayList<Token>(Collections.singletonList(variable))).getValue());
 		assertEquals("A", variable.getString());
 	}
 
 	@Test
 	public void testUpdateVariable() {
-		List<Token> internalTokens = new ArrayList<>();
-
-		internalTokens.add(new ValueToken(2));
-		internalTokens.add(new MultOperatorToken());
-		internalTokens.add(new ValueToken(5));
-
-		Formula internalFormula = new Formula(internalTokens);
-
 		VariableToken variable = new VariableToken("A", 0.0);
 
 		DataProvider dataProvider = new DataProvider();
 		dataProvider.add(variable, internalFormula);
 
 		dataProvider.updateValues();
-		assertEquals(2 * 5.0, interpreter.eval(new ArrayList<Token>(Arrays.asList(variable))).getValue());
+		assertEquals(2 * 5.0, interpreter.eval(new ArrayList<Token>(Collections.singletonList(variable))).getValue());
 		assertEquals("A", variable.getString());
 
 		internalFormula.getTokens().add(new AddOperatorToken());
 		internalFormula.getTokens().add(new ValueToken(3));
 
 		dataProvider.updateValues();
-		assertEquals(2 * 5 + 3.0, interpreter.eval(new ArrayList<Token>(Arrays.asList(variable))).getValue());
+		assertEquals(2 * 5 + 3.0, interpreter.eval(new ArrayList<Token>(Collections.singletonList(variable))).getValue());
 		assertEquals("A", variable.getString());
 
 		variable.setName("B");
@@ -101,21 +99,13 @@ public class UserVariableTest {
 
 	@Test
 	public void testInvalidReference() {
-		List<Token> internalTokens = new ArrayList<>();
-
-		internalTokens.add(new ValueToken(2));
-		internalTokens.add(new MultOperatorToken());
-		internalTokens.add(new ValueToken(5));
-
-		Formula internalFormula = new Formula(internalTokens);
-
 		VariableToken variable = new VariableToken("A", 0.0);
 
 		DataProvider dataProvider = new DataProvider();
 		dataProvider.add(variable, internalFormula);
 
 		dataProvider.updateValues();
-		assertEquals(2 * 5.0, interpreter.eval(new ArrayList<Token>(Arrays.asList(variable))).getValue());
+		assertEquals(2 * 5.0, interpreter.eval(new ArrayList<Token>(Collections.singletonList(variable))).getValue());
 		assertEquals("A", variable.getString());
 
 		dataProvider.remove(variable);

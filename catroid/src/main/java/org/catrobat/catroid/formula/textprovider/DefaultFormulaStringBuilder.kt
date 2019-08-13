@@ -44,7 +44,7 @@ class DefaultFormulaStringBuilder : FormulaStringBuilder {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun appendDouble(argument: Double) : FormulaStringBuilder{
+    override fun append(argument: Double) : FormulaStringBuilder{
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

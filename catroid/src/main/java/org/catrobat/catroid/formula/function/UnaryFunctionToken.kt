@@ -38,58 +38,58 @@ String) : FunctionToken() {
     }
 
     class Sin(tokens: List<Token>) : UnaryFunctionToken(tokens, "sine") {
-        override fun eval() = ValueToken(Math.sin(FormulaInterpreter().eval(tokens).value))
+        override fun eval(interpreter: FormulaInterpreter) = ValueToken(Math.sin(interpreter.eval(tokens).value))
     }
 
     class Cos(tokens: List<Token>) : UnaryFunctionToken(tokens, "cosine") {
-        override fun eval() = ValueToken(Math.cos(FormulaInterpreter().eval(tokens).value))
+        override fun eval(interpreter: FormulaInterpreter) = ValueToken(Math.cos(interpreter.eval(tokens).value))
     }
 
     class Tan(tokens: List<Token>) : UnaryFunctionToken(tokens, "tangent") {
-        override fun eval() = ValueToken(Math.tan(FormulaInterpreter().eval(tokens).value))
+        override fun eval(interpreter: FormulaInterpreter) = ValueToken(Math.tan(interpreter.eval(tokens).value))
     }
 
     class Ln(tokens: List<Token>) : UnaryFunctionToken(tokens, "natural logarithm") {
-        override fun eval() = ValueToken(Math.log(FormulaInterpreter().eval(tokens).value))
+        override fun eval(interpreter: FormulaInterpreter) = ValueToken(Math.log(interpreter.eval(tokens).value))
     }
 
     class Lg(tokens: List<Token>) : UnaryFunctionToken(tokens, "decimal logarithm") {
-        override fun eval() = ValueToken(Math.log10(FormulaInterpreter().eval(tokens).value))
+        override fun eval(interpreter: FormulaInterpreter) = ValueToken(Math.log10(interpreter.eval(tokens).value))
     }
 
     class Sqrt(tokens: List<Token>) : UnaryFunctionToken(tokens, "square root") {
-        override fun eval() = ValueToken(Math.sqrt(FormulaInterpreter().eval(tokens).value))
+        override fun eval(interpreter: FormulaInterpreter) = ValueToken(Math.sqrt(interpreter.eval(tokens).value))
     }
 
     class Abs(tokens: List<Token>) : UnaryFunctionToken(tokens, "absolute value") {
-        override fun eval(): ValueToken = ValueToken(Math.abs(FormulaInterpreter().eval(tokens).value))
+        override fun eval(interpreter: FormulaInterpreter): ValueToken = ValueToken(Math.abs(interpreter.eval(tokens).value))
     }
 
     class Asin(tokens: List<Token>) : UnaryFunctionToken(tokens, "arcsine") {
-        override fun eval() = ValueToken(Math.asin(FormulaInterpreter().eval(tokens).value))
+        override fun eval(interpreter: FormulaInterpreter) = ValueToken(Math.asin(interpreter.eval(tokens).value))
     }
 
     class Acos(tokens: List<Token>) : UnaryFunctionToken(tokens, "arccosine") {
-        override fun eval() = ValueToken(Math.acos(FormulaInterpreter().eval(tokens).value))
+        override fun eval(interpreter: FormulaInterpreter) = ValueToken(Math.acos(interpreter.eval(tokens).value))
     }
 
     class Atan(tokens: List<Token>) : UnaryFunctionToken(tokens, "arctangent") {
-        override fun eval() = ValueToken(Math.atan(FormulaInterpreter().eval(tokens).value))
+        override fun eval(interpreter: FormulaInterpreter) = ValueToken(Math.atan(interpreter.eval(tokens).value))
     }
 
     class Exp(tokens: List<Token>) : UnaryFunctionToken(tokens, "exponent") {
-        override fun eval() = ValueToken(Math.exp(FormulaInterpreter().eval(tokens).value))
+        override fun eval(interpreter: FormulaInterpreter) = ValueToken(Math.exp(interpreter.eval(tokens).value))
     }
 
     class Floor(tokens: List<Token>) : UnaryFunctionToken(tokens, "floor") {
-        override fun eval() = ValueToken(Math.floor(FormulaInterpreter().eval(tokens).value))
+        override fun eval(interpreter: FormulaInterpreter) = ValueToken(Math.floor(interpreter.eval(tokens).value))
     }
 
     class Ceil(tokens: List<Token>) : UnaryFunctionToken(tokens, "ceiling") {
-        override fun eval() = ValueToken(Math.ceil(FormulaInterpreter().eval(tokens).value))
+        override fun eval(interpreter: FormulaInterpreter) = ValueToken(Math.ceil(interpreter.eval(tokens).value))
     }
 
     class Round(tokens: List<Token>) : UnaryFunctionToken(tokens, "round") {
-        override fun eval() = ValueToken(Math.round(FormulaInterpreter().eval(tokens).value).toDouble())
+        override fun eval(interpreter: FormulaInterpreter) = ValueToken(Math.round(interpreter.eval(tokens).value).toDouble())
     }
 }

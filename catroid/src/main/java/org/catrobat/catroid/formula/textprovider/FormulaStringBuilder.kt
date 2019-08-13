@@ -24,7 +24,7 @@
 package org.catrobat.catroid.formula.textprovider
 
 interface FormulaStringBuilder {
-    fun appendDouble(argument : Double) : FormulaStringBuilder
+    fun append(argument : Double) : FormulaStringBuilder
     fun append(argument : String) : FormulaStringBuilder
 
     fun beginFunction(functionText: String) : FormulaStringBuilder

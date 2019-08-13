@@ -23,6 +23,7 @@
 
 package org.catrobat.catroid.formula.value
 
+import org.catrobat.catroid.formula.FormulaInterpreter
 import org.catrobat.catroid.formula.Token
 import org.catrobat.catroid.formula.operator.OperatorToken
 import org.catrobat.catroid.formula.textprovider.FormulaStringBuilder
@@ -31,10 +32,10 @@ import java.util.Stack
 open class ValueToken(var value: Double) : Token() {
 
     override fun appendText(stringBuilder: FormulaStringBuilder) {
-        stringBuilder.appendDouble(value)
+        stringBuilder.append(value)
     }
 
-    override fun eval(operators: Stack<OperatorToken>, values: Stack<ValueToken>) {
+    override fun eval(interpreter: FormulaInterpreter, operators: Stack<OperatorToken>, values: Stack<ValueToken>) {
         values.push(this)
     }
 

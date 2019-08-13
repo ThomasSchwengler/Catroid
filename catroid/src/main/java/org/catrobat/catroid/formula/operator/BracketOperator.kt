@@ -23,6 +23,7 @@
 
 package org.catrobat.catroid.formula.operator
 
+import org.catrobat.catroid.formula.FormulaInterpreter
 import org.catrobat.catroid.formula.textprovider.FormulaStringBuilder
 import org.catrobat.catroid.formula.value.ValueToken
 import java.util.Stack
@@ -36,7 +37,7 @@ abstract class BracketOperator : OperatorToken(0) {
             stringBuilder.append("(")
         }
 
-        override fun eval(operators: Stack<OperatorToken>, values: Stack<ValueToken>) {
+        override fun eval(interpreter: FormulaInterpreter, operators: Stack<OperatorToken>, values: Stack<ValueToken>) {
             operators.push(this)
         }
     }
@@ -46,7 +47,7 @@ abstract class BracketOperator : OperatorToken(0) {
             stringBuilder.append(")")
         }
 
-        override fun eval(operators: Stack<OperatorToken>, values: Stack<ValueToken>) {
+        override fun eval(interpreter: FormulaInterpreter, operators: Stack<OperatorToken>, values: Stack<ValueToken>) {
             while (!operators.empty()) {
                 val op = operators.pop()
                 op.applyTo(values)

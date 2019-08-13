@@ -39,28 +39,23 @@ String) : FunctionToken() {
         stringBuilder.endFunction()
     }
 
-    class Max(leftTokens: List<Token>, rightTokens: List<Token>) : BinaryFunctionToken(leftTokens, rightTokens,
-                                                                                       "maximum of") {
-        override fun eval() = ValueToken(Math.max(FormulaInterpreter().eval(leftTokens).value,
-                                       FormulaInterpreter().eval(rightTokens).value))
+    class Max(leftTokens: List<Token>, rightTokens: List<Token>) : BinaryFunctionToken(leftTokens, rightTokens, "maximum of") {
+        override fun eval(interpreter: FormulaInterpreter) =
+            ValueToken(Math.max(interpreter.eval(leftTokens).value, interpreter.eval(rightTokens).value))
     }
 
-    class Min(leftTokens: List<Token>, rightTokens: List<Token>) : BinaryFunctionToken(leftTokens, rightTokens,
-                                                                                       "minimum of") {
-        override fun eval() = ValueToken(Math.min(FormulaInterpreter().eval(leftTokens).value,
-                FormulaInterpreter().eval(rightTokens).value))
+    class Min(leftTokens: List<Token>, rightTokens: List<Token>) : BinaryFunctionToken(leftTokens, rightTokens, "minimum of") {
+        override fun eval(interpreter: FormulaInterpreter) =
+            ValueToken(Math.min(interpreter.eval(leftTokens).value, interpreter.eval(rightTokens).value))
     }
 
-    class Pow(leftTokens: List<Token>, rightTokens: List<Token>) : BinaryFunctionToken(leftTokens, rightTokens,
-                                                                                       "power") {
-
-        override fun eval() = ValueToken(Math.pow(FormulaInterpreter().eval(leftTokens).value,
-                FormulaInterpreter().eval(rightTokens).value))
+    class Pow(leftTokens: List<Token>, rightTokens: List<Token>) : BinaryFunctionToken(leftTokens, rightTokens, "power") {
+        override fun eval(interpreter: FormulaInterpreter) =
+            ValueToken(Math.pow(interpreter.eval(leftTokens).value, interpreter.eval(rightTokens).value))
     }
 
-    class Mod(leftTokens: List<Token>, rightTokens: List<Token>) : BinaryFunctionToken(leftTokens, rightTokens,
-                                                                                       "modulo") {
-        override fun eval() = ValueToken(FormulaInterpreter().eval(leftTokens).value %
-                FormulaInterpreter().eval(rightTokens).value)
+    class Mod(leftTokens: List<Token>, rightTokens: List<Token>) : BinaryFunctionToken(leftTokens, rightTokens, "modulo") {
+        override fun eval(interpreter: FormulaInterpreter) =
+            ValueToken(interpreter.eval(leftTokens).value % interpreter.eval(rightTokens).value)
     }
 }
