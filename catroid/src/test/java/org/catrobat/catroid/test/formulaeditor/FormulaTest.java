@@ -179,14 +179,14 @@ public class FormulaTest {
 		FormulaElement joinFunctionFormulaElement = new FormulaElement(ElementType.FUNCTION,
 				Functions.JOIN.name(), null, helloStringFormulaElement, worldStringFormulaElement);
 		Formula joinFormula = new Formula(joinFunctionFormulaElement);
-		String computeDialogResult = joinFormula.getResultForComputeDialog(null);
+		String computeDialogResult = joinFormula.getResultForComputeDialog(null, null);
 		assertEquals("helloworld", computeDialogResult);
 
 		FormulaElement indexFormulaElement = new FormulaElement(ElementType.NUMBER, "1", null);
 		FormulaElement letterFunctionFormulaElement = new FormulaElement(ElementType.FUNCTION,
 				Functions.LETTER.name(), null, indexFormulaElement, helloStringFormulaElement);
 		Formula letterFormula = new Formula(letterFunctionFormulaElement);
-		computeDialogResult = letterFormula.getResultForComputeDialog(null);
+		computeDialogResult = letterFormula.getResultForComputeDialog(null, null);
 		assertEquals("h", computeDialogResult);
 
 		FormulaElement regexStringFormulaElement = new FormulaElement(ElementType.STRING, " an? ([^ .]+)", null);
@@ -195,7 +195,7 @@ public class FormulaTest {
 		FormulaElement regexFunctionFormulaElement = new FormulaElement(ElementType.FUNCTION,
 				Functions.REGEX.name(), null, regexStringFormulaElement, iamanelephantStringFormulaElement);
 		Formula regexFormula = new Formula(regexFunctionFormulaElement);
-		computeDialogResult = regexFormula.getResultForComputeDialog(null);
+		computeDialogResult = regexFormula.getResultForComputeDialog(null, null);
 		assertEquals("elephant", computeDialogResult);
 	}
 }
